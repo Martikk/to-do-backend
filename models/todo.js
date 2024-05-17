@@ -1,27 +1,23 @@
-// models/todo.js
 module.exports = (sequelize, DataTypes) => {
-  const Todo = sequelize.define('Todo', {
+    const Todo = sequelize.define('Todo', {
       text: {
-          type: DataTypes.STRING,
-          allowNull: false,
-      },
-      completed: {
-          type: DataTypes.BOOLEAN,
-          defaultValue: false,
+        type: DataTypes.STRING,
+        allowNull: false,
       },
       due_date: {
-          type: DataTypes.DATE,
-          allowNull: true,
+        type: DataTypes.DATE,
+        allowNull: true,
       },
       category: {
-          type: DataTypes.STRING,
-          allowNull: true,
+        type: DataTypes.STRING,
+        allowNull: true,
       },
       priority: {
-          type: DataTypes.ENUM('High', 'Medium', 'Low'),
-          allowNull: true,
+        type: DataTypes.STRING,
+        allowNull: true,
       },
-  });
-
-  return Todo;
-};
+    });
+  
+    return Todo;
+  };
+  
