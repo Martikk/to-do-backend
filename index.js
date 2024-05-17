@@ -4,7 +4,7 @@ const cors = require('cors');
 const db = require('./models');
 
 const app = express();
-const port = 5001; // Ensure this port is not in use
+const port = process.env.PORT || 5001; // Use Heroku's port if available
 
 // Middleware
 app.use(cors());
@@ -17,38 +17,44 @@ db.sequelize.sync().then(() => {
 
 // Routes
 app.get('/todos', async (req, res) => {
-  const todos = await db.Todo.findAll();
-  res.json(todos);
+  try {
+    const todos = await db.Todo.findAll();
+    res.json(todos);
+  } catch (error) {
+    res.status(500).send("Error fetching todos");
+  }
 });
 
 app.post('/todos', async (req, res) => {
   try {
-      const newTodo = await db.Todo.create({
-          text: req.body.text,
-          due_date: req.body.due_date,
-          category: req.body.category,
-          priority: req.body.priority
-      });
-      res.json(newTodo);
+    const newTodo = await db.Todo.create(req.body);
+    res.json(newTodo);
   } catch (error) {
-      console.error("Error creating todo:", error);
-      res.status(500).json({ error: "Error creating todo" });
+    res.status(500).send("Error creating todo");
   }
 });
 
 app.put('/todos/:id', async (req, res) => {
-  const updatedTodo = await db.Todo.update(req.body, {
-    where: { id: req.params.id },
-    returning: true,
-  });
-  res.json(updatedTodo[1][0]);
+  try {
+    const updatedTodo = await db.Todo.update(req.body, {
+      where: { id: req.params.id },
+      returning: true,
+    });
+    res.json(updatedTodo[1][0]);
+  } catch (error) {
+    res.status(500).send("Error updating todo");
+  }
 });
 
 app.delete('/todos/:id', async (req, res) => {
-  await db.Todo.destroy({
-    where: { id: req.params.id },
-  });
-  res.json({ message: 'Todo deleted' });
+  try {
+    await db.Todo.destroy({
+      where: { id: req.params.id },
+    });
+    res.json({ message: 'Todo deleted' });
+  } catch (error) {
+    res.status(500).send("Error deleting todo");
+  }
 });
 
 // Start server
